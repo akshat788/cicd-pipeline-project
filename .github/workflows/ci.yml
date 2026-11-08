@@ -1,0 +1,26 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Say hello
+        run: echo "Pipeline triggered by a push from ${{ github.actor }}"
+
+      - name: List repository files
+        run: ls -la
+
+      - name: Show runner and Python info
+        run: |
+          echo "Runner OS: $RUNNER_OS"
+          python3 --version
