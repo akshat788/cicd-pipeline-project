@@ -1,0 +1,13 @@
+# Virtual environment (huge, and rebuilt from requirements.txt)
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment variables and secrets
+.env
+
+# Editor files
+.vscode/
