@@ -114,3 +114,23 @@ jobs:
       - name: Stop container
         if: always()
         run: docker rm -f flask-app
+  
+  pipeline-report:
+    needs: [build-and-test, docker-publish, deploy-smoke-test]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Write pipeline summary
+        run: |
+          echo "## Pipeline report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Stage | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build and test | ${{ needs.build-and-test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Docker publish | ${{ needs.docker-publish.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Deploy smoke test | ${{ needs.deploy-smoke-test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "Triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "Image: ghcr.io/${{ github.repository }}:${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
