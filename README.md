@@ -8,13 +8,23 @@ verified by pulling and running the published image.
 
 ## Pipeline architecture
 
-```
-git push -> GitHub Actions
-              |
-              |-- Job 1: build-and-test       (install, build check, pytest)
-              |-- Job 2: docker-publish       (build image, push to GHCR)
-              |-- Job 3: deploy-smoke-test    (pull image, run it, check /health)
-              `-- Job 4: pipeline-report      (summary table)
+## Pipeline architecture
+
+```mermaid
+flowchart LR
+    Dev[Developer] -->|git push| GH[GitHub Repository]
+    GH -->|triggers| CI
+
+    subgraph CI[GitHub Actions Pipeline]
+        direction LR
+        A[Job 1: Build and Test] -->|pass| B[Job 2: Docker Publish]
+        B -->|pass| C[Job 3: Deploy Smoke Test]
+        C --> D[Job 4: Pipeline Report]
+    end
+
+    B -->|push image| R[(GHCR Registry)]
+    R -->|pull image| C
+    CI -.->|failure email| Dev
 ```
 
 A failing stage stops everything after it, so broken code is never published.
